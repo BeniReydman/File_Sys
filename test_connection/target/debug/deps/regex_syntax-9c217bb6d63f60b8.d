@@ -1,0 +1,10 @@
+C:\Users\Beni Reydman\Documents\Work\Rust Code\Testing\test_connection\target\debug\deps\regex_syntax-9c217bb6d63f60b8.rmeta: C:\Users\Beni\ Reydman\.cargo\registry\src\github.com-1ecc6299db9ec823\regex-syntax-0.3.9\src\lib.rs C:\Users\Beni\ Reydman\.cargo\registry\src\github.com-1ecc6299db9ec823\regex-syntax-0.3.9\src\literals.rs C:\Users\Beni\ Reydman\.cargo\registry\src\github.com-1ecc6299db9ec823\regex-syntax-0.3.9\src\parser.rs C:\Users\Beni\ Reydman\.cargo\registry\src\github.com-1ecc6299db9ec823\regex-syntax-0.3.9\src\unicode.rs
+
+C:\Users\Beni Reydman\Documents\Work\Rust Code\Testing\test_connection\target\debug\deps\libregex_syntax-9c217bb6d63f60b8.rlib: C:\Users\Beni\ Reydman\.cargo\registry\src\github.com-1ecc6299db9ec823\regex-syntax-0.3.9\src\lib.rs C:\Users\Beni\ Reydman\.cargo\registry\src\github.com-1ecc6299db9ec823\regex-syntax-0.3.9\src\literals.rs C:\Users\Beni\ Reydman\.cargo\registry\src\github.com-1ecc6299db9ec823\regex-syntax-0.3.9\src\parser.rs C:\Users\Beni\ Reydman\.cargo\registry\src\github.com-1ecc6299db9ec823\regex-syntax-0.3.9\src\unicode.rs
+
+C:\Users\Beni Reydman\Documents\Work\Rust Code\Testing\test_connection\target\debug\deps\regex_syntax-9c217bb6d63f60b8.d: C:\Users\Beni\ Reydman\.cargo\registry\src\github.com-1ecc6299db9ec823\regex-syntax-0.3.9\src\lib.rs C:\Users\Beni\ Reydman\.cargo\registry\src\github.com-1ecc6299db9ec823\regex-syntax-0.3.9\src\literals.rs C:\Users\Beni\ Reydman\.cargo\registry\src\github.com-1ecc6299db9ec823\regex-syntax-0.3.9\src\parser.rs C:\Users\Beni\ Reydman\.cargo\registry\src\github.com-1ecc6299db9ec823\regex-syntax-0.3.9\src\unicode.rs
+
+C:\Users\Beni\ Reydman\.cargo\registry\src\github.com-1ecc6299db9ec823\regex-syntax-0.3.9\src\lib.rs:
+C:\Users\Beni\ Reydman\.cargo\registry\src\github.com-1ecc6299db9ec823\regex-syntax-0.3.9\src\literals.rs:
+C:\Users\Beni\ Reydman\.cargo\registry\src\github.com-1ecc6299db9ec823\regex-syntax-0.3.9\src\parser.rs:
+C:\Users\Beni\ Reydman\.cargo\registry\src\github.com-1ecc6299db9ec823\regex-syntax-0.3.9\src\unicode.rs:
