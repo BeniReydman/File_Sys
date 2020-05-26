@@ -81,7 +81,7 @@ fn main() -> std::io::Result<()> {
 
         // Write and Read
         // update(directory1, buf);
-        database.insert(database::Entry{sub_source: "/levels/", data: buf}).unwrap();
+        database.insert(database::Entry{sub_source: "levels", data: buf}).unwrap();
         //database::DB::find_file(&database,"data/levels").unwrap();
 
         // Sleep

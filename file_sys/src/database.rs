@@ -2,9 +2,11 @@ extern crate chrono;
 
 use std::io;
 use std::io::prelude::*;
+use std::fs;
 use std::fs::File;
 use std::fs::create_dir_all;
 use std::fs::OpenOptions;
+use std::fs::metadata;
 use chrono::prelude::*;
 
 pub struct Database {
@@ -52,7 +54,7 @@ impl Database {
     
     // Lists all the databases within the current data source
     pub fn list_db(&self) {
-
+        print_directories(self.source, 0);
     }
 
     // Insert into database
@@ -91,6 +93,36 @@ impl Database {
     // Find a partical Entry
     pub fn find_data(&self, date: &str) {
         
+    }
+}
+
+fn print_directories(path: &str, count: usize) {
+    let paths = fs::read_dir(path).unwrap();
+
+    for entry in paths {
+        if let Ok(entry) = entry {
+            if entry.path().is_dir() {
+                // Print Directory
+                print!("{:-<1$}", "", count);
+                println!("{}", entry.file_name().into_string().unwrap());
+                print_directories(entry.path().to_str().unwrap(), count + 1);
+            }
+        }
+    }
+}
+
+fn print_db(path: &str, count: usize) {
+    let paths = fs::read_dir(path).unwrap();
+
+    for entry in paths {
+        if let Ok(entry) = entry {
+            // Print Directory
+            print!("{:-<1$}", "", count);
+            println!("{}", entry.file_name().into_string().unwrap());
+            if entry.path().is_dir() {
+                print_directories(entry.path().to_str().unwrap(), count + 1);
+            }
+        }
     }
 }
 
