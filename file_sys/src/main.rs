@@ -42,6 +42,9 @@ pub struct RawData { // change all names
 // User will configure a top level directory.
 
 fn main() -> std::io::Result<()> {
+    // Set DB
+    let database = database::Database::new("data", "%M");
+
     // Sleep Variables
     let sleep_time = time::Duration::from_millis(15000);
 
@@ -77,7 +80,9 @@ fn main() -> std::io::Result<()> {
         }
 
         // Write and Read
-        update(directory1, buf);
+        // update(directory1, buf);
+        database::DB::insert(&database, database::Entry{sub_source: "/levels/", data: buf}).unwrap();
+        //database::DB::find_file(&database,"data/levels").unwrap();
 
         // Sleep
         thread::sleep(sleep_time);
@@ -92,19 +97,19 @@ fn main() -> std::io::Result<()> {
 * Purpose:
 * Reads and writes to directory
 ***/
-fn update(mut directory: String, buf: Vec<u8>) {
-    // Write
-    {
-        write(&buf, &mut directory).unwrap();
-    }
+// fn update(mut directory: String, buf: Vec<u8>) {
+//     // Write
+//     {
+//         write(&buf, &mut directory).unwrap();
+//     }
 
-    // Read
-    {
-        let mut buf1 = Vec::<u8>::new();
-        read(&mut buf1, &mut directory).unwrap();
-    }
+//     // Read
+//     {
+//         let mut buf1 = Vec::<u8>::new();
+//         read(&mut buf1, &mut directory).unwrap();
+//     }
 
-}
+// }
 
 /***
 * Function new_buf:

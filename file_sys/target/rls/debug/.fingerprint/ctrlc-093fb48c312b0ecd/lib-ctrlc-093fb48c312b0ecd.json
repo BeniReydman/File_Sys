@@ -1,0 +1,1 @@
+{"rustc":12207601712932690048,"features":"[]","target":8870582504017669363,"profile":14672114853574311971,"path":11643553594499330944,"deps":[[14871597770057646205,"winapi",false,14713965935471757532]],"local":[{"CheckDepInfo":{"dep_info":"debug\\.fingerprint\\ctrlc-093fb48c312b0ecd\\dep-lib-ctrlc-093fb48c312b0ecd"}}],"rustflags":[],"metadata":15320878574620528495}

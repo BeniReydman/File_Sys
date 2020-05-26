@@ -13,11 +13,11 @@ pub struct Database {
 }
 
 pub struct Entry {
-    sub_source: &'static str,
-    data:       Vec<u8>,
+    pub sub_source: &'static str,
+    pub data:       Vec<u8>,
 }
 
-trait DB {
+pub trait DB {
     // Set a new source for the database
     fn set_source(&self, source: &str) -> Result<(), io::Error>;
     
@@ -27,11 +27,21 @@ trait DB {
     // Insert into database
     fn insert(&self, entry: Entry) -> Result<(), io::Error>;
 
-    // Find a particular file/folder
-    fn find_directory(&self, source: &str) -> Result<(), io::Error>;
+    // Find a particular file
+    fn find_file(&self, source: &str) -> Result<Vec<u8>, io::Error>;
 
     // Find a partical Entry
     fn find_data(&self, date: &str);
+}
+
+impl Database {
+    // Constructor
+    pub fn new(source: &'static str, format: &'static str) -> Database {
+        Database {
+            source: source,
+            format: format,
+        }
+    }
 }
 
 impl DB for Database {
@@ -64,8 +74,18 @@ impl DB for Database {
     }
 
     // Find a particular file/folder
-    fn find_directory(&self, source: &str) -> Result<(), io::Error> {
-        Ok(())
+    fn find_file(&self, source: &str) -> Result<Vec<u8>, io::Error> {
+        // Set the directory
+        let mut directory = String::new();
+        directory.push_str(self.source);    // Database Directory
+        directory.push_str(source);         // Sub directory
+
+        // Read from file
+        let mut buf: Vec<u8> = Vec::new();
+        let mut file = File::open(&mut directory)?;
+        file.read_to_end(&mut buf)?;
+        println!("Read: {:?}\n", buf);
+        return Ok(buf);
     }
 
     // Find a partical Entry
