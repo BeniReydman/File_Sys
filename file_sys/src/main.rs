@@ -2,6 +2,7 @@ extern crate rmp_serde as rmps;
 extern crate rand;
 extern crate chrono;
 extern crate ctrlc;
+pub mod database;
 
 use std::fs::File;
 use std::fs::create_dir_all;
@@ -37,6 +38,8 @@ pub struct RawData { // change all names
 	pub NOISE:		Option<f32>, 
 	pub TimeStamp:	Option<String> // change ~ ticks
 }
+
+// User will configure a top level directory.
 
 fn main() -> std::io::Result<()> {
     // Sleep Variables
