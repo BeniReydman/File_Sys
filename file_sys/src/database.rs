@@ -8,8 +8,9 @@ use std::fs::OpenOptions;
 use chrono::prelude::*;
 
 pub struct Database {
-    source:     &'static str,
-    format:     &'static str,
+    source:         &'static str,
+    date_format:    &'static str,
+    time_format:    &'static str,
 }
 
 pub struct Entry {
@@ -36,45 +37,44 @@ pub trait DB {
 
 impl Database {
     // Constructor
-    pub fn new(source: &'static str, format: &'static str) -> Database {
+    pub fn new(source: &'static str, data: &'static str, file: &'static str) -> Database {
         Database {
             source: source,
-            format: format,
+            date_format: data,
+            time_format: file
         }
     }
-}
 
-impl DB for Database {
     // Set a new source for the database
-    fn set_source(&self, source: &str) -> Result<(), io::Error> {
+    pub fn set_source(&self, source: &str) -> Result<(), io::Error> {
         Ok(())
     }
     
     // Lists all the databases within the current data source
-    fn list_db(&self) {
+    pub fn list_db(&self) {
 
     }
 
     // Insert into database
-    fn insert(&self, entry: Entry) -> Result<(), io::Error> {
+    pub fn insert(&self, entry: Entry) -> Result<(), io::Error> {
         // Set the directory
-        let mut directory = String::new();
-        directory.push_str(self.source);            // Database Directory
-        directory.push_str(entry.sub_source);       // Sub directory
-        create_dir_all(&directory)?;                // Creates directory if doesn't exist
-
-        // Set file path
-        directory.push_str(&get_date(self.format)); // current formatted date/time
+        let directory = format!("{}/{}/{}/{}", 
+                    self.source,                    // Database Directory
+                    entry.sub_source,               // Sub directory
+                    get_datetime(self.date_format), // Current format of data Ex: &Y&m&d -> 19700101
+                    get_datetime(self.time_format)  // Current format of time
+                );
+        println!("{:?}", directory);
 
         // Write to database
-        let mut file = OpenOptions::new().append(true).open(&mut directory)?;   // Write at end of file
+        let mut file = OpenOptions::new().append(true).open(&directory)?;   // Write at end of file
         file.write_all(&entry.data)?;
         println!("Wrote: {:?}\n", entry.data);
         Ok(())
     }
 
     // Find a particular file/folder
-    fn find_file(&self, source: &str) -> Result<Vec<u8>, io::Error> {
+    pub fn find_file(&self, source: &str) -> Result<Vec<u8>, io::Error> {
         // Set the directory
         let mut directory = String::new();
         directory.push_str(self.source);    // Database Directory
@@ -89,12 +89,12 @@ impl DB for Database {
     }
 
     // Find a partical Entry
-    fn find_data(&self, date: &str) {
+    pub fn find_data(&self, date: &str) {
         
     }
 }
 
-fn get_date(format: &str) -> String {
+fn get_datetime(format: &str) -> String {
     let local: DateTime<Local> = Local::now();
     return local.format(format).to_string();
 }
