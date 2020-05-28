@@ -43,7 +43,7 @@ pub struct RawData { // change all names
 
 fn main() -> std::io::Result<()> {
     // Set DB
-    let database = database::Database::new("data", "%Y%m%d", "%M");
+    let database = database::Database::new("data");
 
     // Sleep Variables
     let sleep_time = time::Duration::from_millis(15000);
@@ -81,7 +81,7 @@ fn main() -> std::io::Result<()> {
 
         // Write and Read
         // update(directory1, buf);
-        database.insert(database::Entry{sub_source: "levels", data: buf}).unwrap();
+        database.insert(database::Entry{table: "levels", data: buf}).unwrap();
         //database::DB::find_file(&database,"data/levels").unwrap();
 
         // Sleep

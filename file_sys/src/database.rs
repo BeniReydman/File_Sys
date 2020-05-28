@@ -1,5 +1,6 @@
 extern crate chrono;
 
+use std::convert::TryFrom;
 use std::io;
 use std::io::prelude::*;
 use std::fs;
@@ -9,14 +10,15 @@ use std::fs::OpenOptions;
 use std::fs::metadata;
 use chrono::prelude::*;
 
+static DATE_FORMAT: &str = "%Y%m%d";
+static TIME_FORMAT: &str = "%H";
+
 pub struct Database {
     source:         &'static str,
-    date_format:    &'static str,
-    time_format:    &'static str,
 }
 
 pub struct Entry {
-    pub sub_source: &'static str,
+    pub table: &'static str,
     pub data:       Vec<u8>,
 }
 
@@ -39,11 +41,9 @@ pub trait DB {
 
 impl Database {
     // Constructor
-    pub fn new(source: &'static str, data: &'static str, file: &'static str) -> Database {
+    pub fn new(source: &'static str) -> Database {
         Database {
-            source: source,
-            date_format: data,
-            time_format: file
+            source: source
         }
     }
 
@@ -62,9 +62,9 @@ impl Database {
         // Set the directory
         let directory = format!("{}/{}/{}/{}", 
                     self.source,                    // Database Directory
-                    entry.sub_source,               // Sub directory
-                    get_datetime(self.date_format), // Current format of data Ex: &Y&m&d -> 19700101
-                    get_datetime(self.time_format)  // Current format of time
+                    entry.table,               // Sub directory
+                    get_local_datetime(DATE_FORMAT), // Current format of data Ex: &Y&m&d -> 19700101
+                    get_local_datetime(TIME_FORMAT)  // Current format of time
                 );
         println!("{:?}", directory);
 
@@ -90,7 +90,7 @@ impl Database {
         return Ok(buf);
     }
 
-    // Find a partical Entry
+    // Find a particular Entry
     pub fn find_data(&self, date: &str) {
         
     }
@@ -126,7 +126,20 @@ fn print_db(path: &str, count: usize) {
     }
 }
 
-fn get_datetime(format: &str) -> String {
+fn get_local_datetime(format: &str) -> String {
     let local: DateTime<Local> = Local::now();
     return local.format(format).to_string();
+}
+
+fn get_datetime(timestamp: u32) -> DateTime<Local> {
+    let naive_datetime = NaiveDateTime::from_timestamp(i64::from(timestamp), 0);  // the 0 represents nanoseconds for leap seconds
+    let utc_datetime = DateTime::<Utc>::from_utc(naive_datetime, Utc);
+    let local: DateTime<Local> = Local::now();
+    let datetime = utc_datetime.with_timezone(&local.timezone());
+    return datetime;
+}
+
+fn get_timestamp() -> Option<u32> {
+    let local: DateTime<Local> = Local::now();
+    return u32::try_from(local.timestamp()).ok();
 }
