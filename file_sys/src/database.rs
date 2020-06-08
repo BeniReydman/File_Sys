@@ -12,8 +12,9 @@ use std::path::Path;
 use std::io::{Error, ErrorKind};
 use chrono::prelude::*;
 use chrono::Duration;
-use serde::Deserialize;
-use rmps::Deserializer;
+use serde::{Serialize, Deserialize};
+use crc::{crc32, Hasher32};
+use rmps::{Serializer, Deserializer};
 
 static DATE_FORMAT: &str = "%Y%m%d";
 static TIME_FORMAT: &str = "%H";
@@ -27,7 +28,7 @@ pub struct Entry {
     pub data:       Vec<u8>,
 }
 
-#[derive(Deserialize, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct MpdRecordType {
     id:         u32,        // Record identifier
     datalog:    Vec<u8>,    // Byte array of length 'size'
@@ -70,24 +71,37 @@ impl Database {
     }
 
     // Insert into database
-    pub fn insert_at(&self, path: &str, entry: Entry) -> Result<(), io::Error> {
+    pub fn insert_at(&self, path: &str, file: &str, entry: Entry) -> Result<(), io::Error> {
         // Set the directory
-        let directory = format!("{}/{}/{}", 
+        let mut directory = format!("{}/{}/{}", 
                     self.source,                    // Database Directory
                     entry.table,               // Sub directory
                     path  // Current format of time
                 );
-        println!("{:?}", directory);
-        // Check if exists
-        if !Path::new(&directory).exists() {
+        println!("Directory is: {:?}", directory);
+
+        
+        // Ensure directory/file exists
+        create_dir_all(&directory).unwrap();
+        directory.push_str(&format!("/{}", file));
+        let path = Path::new(&mut directory);
+        if !path.exists() {
             File::create(&directory)?;
-            println!("File created!\n")
+            println!("File created!\n");
         }
+
+        // Set up data
+        let new_data = MpdRecordType{
+            id:         1,
+            datalog:    entry.data.clone(),
+            checksum:   crc32::checksum_ieee(&entry.data)
+        };
+        let serialized_data = serialize_struct(new_data).unwrap();
 
         // Write to database
         let mut file = OpenOptions::new().append(true).open(&directory)?;   // Write at end of file
-        file.write_all(&entry.data)?;
-        println!("Wrote: {:?}\n", entry.data);
+        file.write_all(&serialized_data)?;
+        println!("Wrote: {:?}\n", serialized_data);
         Ok(())
     }
 
@@ -140,11 +154,15 @@ impl Database {
         let mut curr_timestamp = get_datetime(start_time);
         let mut end_date = get_datetime(end_time);
         let mut buf = Vec::new();
-        let mut curr_directory = format!("{}{}", source, curr_timestamp.format(DATE_FORMAT));
-        let mut curr_file = format!("{}{}", curr_directory, curr_timestamp.format(TIME_FORMAT));
+        let mut curr_directory = String::new();
+        let mut curr_file = String::new();
 
         // Find starting point
         while curr_timestamp <= end_date {
+            // Setup variables
+            buf.clear();
+            curr_directory = format!("{}/{}/{}", self.source, source, curr_timestamp.format(DATE_FORMAT));
+            curr_file = format!("{}/{}", curr_directory, curr_timestamp.format(TIME_FORMAT));
 
             /*** Check if Directory doesn't exist ***/
             if !Path::new(&curr_directory).exists() {
@@ -152,7 +170,7 @@ impl Database {
                 curr_timestamp = curr_timestamp + Duration::seconds(86400);  // += gives error
                 continue;
             }
-    
+
             /*** Check if File doesn't exist ***/
             if !Path::new(&curr_file).exists() {
                 // Add an hour of time and continue
@@ -161,7 +179,7 @@ impl Database {
             }
             
             /*** Read File ***/
-            let mut file = File::open(source).unwrap();
+            let mut file = File::open(curr_file).unwrap();
             file.read_to_end(&mut buf).unwrap();
 
             /*** Deserialize and "publish" ***/
@@ -171,10 +189,14 @@ impl Database {
                     Ok(entry) => entry,
                     Err(_) => {
                         // Add an hour of time and continue
+                        println!("Error!");
                         curr_timestamp = curr_timestamp + Duration::seconds(3600);  // += gives error
                         break;
                     }
                 };
+
+                // Send data here
+                println!("{:?}", entry);
 
                 // Check if entry ID is smaller than start_timestamp
                 if entry.id < start_time {
@@ -186,8 +208,7 @@ impl Database {
                     return;
                 }
 
-                // Send data here
-                println!("{:?}", entry);
+                println!("Data is good!");
             }
         }
     }
@@ -264,6 +285,24 @@ fn print_db(path: &str, count: usize) {
             if entry.path().is_dir() {
                 print_directories(entry.path().to_str().unwrap(), count + 1);
             }
+        }
+    }
+}
+
+/***
+* Function serialize_struct:
+*
+* Purpose:
+* Serializes structs
+***/
+fn serialize_struct<T>(data: T) -> Result<Vec<u8>, ()> where T: Serialize, {
+    let mut buf = Vec::new();
+    let mut msg_pack = Serializer::new(&mut buf);
+    match data.serialize(&mut msg_pack) {
+        Ok(_) => return Ok(buf),
+        Err(e) => {
+            println!("Error serializing: {:?}", e);
+            return Err(())
         }
     }
 }

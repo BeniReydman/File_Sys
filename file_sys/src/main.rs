@@ -44,26 +44,26 @@ pub struct RawData { // change all names
 fn main() -> std::io::Result<()> {
     let database = database::Database::new("data");
 
-    let mut buf: Vec<u8> = new_buf().unwrap();
-    database.insert_at("20200101/01", database::Entry{table: "levels", data: buf}).unwrap();
-    buf = new_buf().unwrap();
-    database.insert_at("20200101/01", database::Entry{table: "levels", data: buf}).unwrap();
-    buf = new_buf().unwrap();
-    database.insert_at("20200101/02", database::Entry{table: "levels", data: buf}).unwrap();
-    buf = new_buf().unwrap();
-    database.insert_at("20200101/02", database::Entry{table: "levels", data: buf}).unwrap();
-    buf = new_buf().unwrap();
-    database.insert_at("20200101/04", database::Entry{table: "levels", data: buf}).unwrap();
-    buf = new_buf().unwrap();
-    database.insert_at("20200101/04", database::Entry{table: "levels", data: buf}).unwrap();
-    buf = new_buf().unwrap();
-    database.insert_at("20200102/01", database::Entry{table: "levels", data: buf}).unwrap();
-    buf = new_buf().unwrap();
-    database.insert_at("20200102/01", database::Entry{table: "levels", data: buf}).unwrap();
-    buf = new_buf().unwrap();
-    database.insert_at("20200102/02", database::Entry{table: "levels", data: buf}).unwrap();
-    buf = new_buf().unwrap();
-    database.insert_at("20200102/03", database::Entry{table: "levels", data: buf}).unwrap();
+    // let mut buf: Vec<u8> = new_buf().unwrap();
+    // database.insert_at("20200101", "01", database::Entry{table: "levels", data: buf}).unwrap();
+    // buf = new_buf().unwrap();
+    // database.insert_at("20200101", "01", database::Entry{table: "levels", data: buf}).unwrap();
+    // buf = new_buf().unwrap();
+    // database.insert_at("20200101", "02", database::Entry{table: "levels", data: buf}).unwrap();
+    // buf = new_buf().unwrap();
+    // database.insert_at("20200101", "02", database::Entry{table: "levels", data: buf}).unwrap();
+    // buf = new_buf().unwrap();
+    // database.insert_at("20200101", "04", database::Entry{table: "levels", data: buf}).unwrap();
+    // buf = new_buf().unwrap();
+    // database.insert_at("20200101", "04", database::Entry{table: "levels", data: buf}).unwrap();
+    // buf = new_buf().unwrap();
+    // database.insert_at("20200102", "01", database::Entry{table: "levels", data: buf}).unwrap();
+    // buf = new_buf().unwrap();
+    // database.insert_at("20200102", "01", database::Entry{table: "levels", data: buf}).unwrap();
+    // buf = new_buf().unwrap();
+    // database.insert_at("20200102", "02", database::Entry{table: "levels", data: buf}).unwrap();
+    // buf = new_buf().unwrap();
+    // database.insert_at("20200102", "03", database::Entry{table: "levels", data: buf}).unwrap();
 
     database.get_data("levels", 1577883600, 1578056400);
 
