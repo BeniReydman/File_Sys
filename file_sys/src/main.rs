@@ -14,7 +14,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use rand::Rng;
 use serde::{Serialize, Deserialize};
-use rmps::{Serializer};
+use rmps::{Serializer, Deserializer};
 use std::io::Error;
 use chrono::prelude::*;
 // use crc::{crc32, Hasher32}; /* To be used once actual struct data is set */
@@ -42,54 +42,84 @@ pub struct RawData { // change all names
 // User will configure a top level directory.
 
 fn main() -> std::io::Result<()> {
-    // Set DB
     let database = database::Database::new("data");
 
-    // Sleep Variables
-    let sleep_time = time::Duration::from_millis(15000);
+    let mut buf: Vec<u8> = new_buf().unwrap();
+    database.insert_at("20200101/01", database::Entry{table: "levels", data: buf}).unwrap();
+    buf = new_buf().unwrap();
+    database.insert_at("20200101/01", database::Entry{table: "levels", data: buf}).unwrap();
+    buf = new_buf().unwrap();
+    database.insert_at("20200101/02", database::Entry{table: "levels", data: buf}).unwrap();
+    buf = new_buf().unwrap();
+    database.insert_at("20200101/02", database::Entry{table: "levels", data: buf}).unwrap();
+    buf = new_buf().unwrap();
+    database.insert_at("20200101/04", database::Entry{table: "levels", data: buf}).unwrap();
+    buf = new_buf().unwrap();
+    database.insert_at("20200101/04", database::Entry{table: "levels", data: buf}).unwrap();
+    buf = new_buf().unwrap();
+    database.insert_at("20200102/01", database::Entry{table: "levels", data: buf}).unwrap();
+    buf = new_buf().unwrap();
+    database.insert_at("20200102/01", database::Entry{table: "levels", data: buf}).unwrap();
+    buf = new_buf().unwrap();
+    database.insert_at("20200102/02", database::Entry{table: "levels", data: buf}).unwrap();
+    buf = new_buf().unwrap();
+    database.insert_at("20200102/03", database::Entry{table: "levels", data: buf}).unwrap();
 
-    // Ensure files are created
-    create_dir_all("/data/levels")?;
-    create_dir_all("/data/raw")?;
+    database.get_data("levels", 1577883600, 1578056400);
 
-    // Set handler
-    let running = Arc::new(AtomicBool::new(true));
-    let r = running.clone();
-
-    ctrlc::set_handler(move || {
-        println!("Quitting! Please wait at least 15 seconds.\n");
-        r.store(false, Ordering::SeqCst);
-    })
-    .expect("Error setting Ctrl-C handler");
-    
-    while running.load(Ordering::SeqCst) {
-        // Add directory if missing
-        let mut directory1 = get_directory_lvls();
-        create_dir_all(&mut directory1)?;
-
-        // Apend time
-        append_minute(&mut directory1);
-
-        // Serialize
-        let buf: Vec<u8> = new_buf().unwrap();
-
-        // Check if exists
-        if !Path::new(&directory1).exists() {
-            File::create(&mut directory1)?;
-            println!("File created!\n")
-        }
-
-        // Write and Read
-        // update(directory1, buf);
-        database.insert(database::Entry{table: "levels", data: buf}).unwrap();
-        //database::DB::find_file(&database,"data/levels").unwrap();
-
-        // Sleep
-        thread::sleep(sleep_time);
-    }
 
     return Ok(());
 }
+
+// fn main() -> std::io::Result<()> {
+//     // Set DB
+//     let database = database::Database::new("data");
+
+//     // Sleep Variables
+//     let sleep_time = time::Duration::from_millis(15000);
+
+//     // Ensure files are created
+//     create_dir_all("/data/levels")?;
+//     create_dir_all("/data/raw")?;
+
+//     // Set handler
+//     let running = Arc::new(AtomicBool::new(true));
+//     let r = running.clone();
+
+//     ctrlc::set_handler(move || {
+//         println!("Quitting! Please wait at least 15 seconds.\n");
+//         r.store(false, Ordering::SeqCst);
+//     })
+//     .expect("Error setting Ctrl-C handler");
+    
+//     while running.load(Ordering::SeqCst) {
+//         // Add directory if missing
+//         let mut directory1 = get_directory_lvls();
+//         create_dir_all(&mut directory1)?;
+
+//         // Apend time
+//         append_minute(&mut directory1);
+
+//         // Serialize
+//         let buf: Vec<u8> = new_buf().unwrap();
+
+//         // Check if exists
+//         if !Path::new(&directory1).exists() {
+//             File::create(&mut directory1)?;
+//             println!("File created!\n")
+//         }
+
+//         // Write and Read
+//         // update(directory1, buf);
+//         database.insert(database::Entry{table: "levels", data: buf}).unwrap();
+//         //database::DB::find_file(&database,"data/levels").unwrap();
+
+//         // Sleep
+//         thread::sleep(sleep_time);
+//     }
+
+//     return Ok(());
+// }
 
 /***
 * Function updates:
